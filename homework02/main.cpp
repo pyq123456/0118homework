@@ -227,6 +227,9 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication a(argc, argv);
+        Q_UNUSED(argc);
+        Q_UNUSED(argv);
 
     qInstallMessageHandler(myMessageOutput);
 
