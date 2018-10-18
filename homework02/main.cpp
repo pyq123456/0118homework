@@ -4,8 +4,8 @@
 #include <QTextStream>
 #include <QFile>
 
-//定义命名空间SK，将文本文件划分为不同的列
-namespace SK {
+
+namespace SK {     //定义命名空间SK，将文本文件划分为不同的列
 enum SortKind{
     col01    =   0x00000001<<0,         //!< 第1列
     col02    =   0x00000001<<1,         //!< 第2列
@@ -48,17 +48,12 @@ typedef struct
     QStringList student;       //定义一个字符串类student
 } studData;
 
-
-
-
 QDebug operator << (QDebug d, const studData &data)                //重载 " << "符号
 {
     for(int i=0;i<data.student.size();i++)
-    d.noquote().nospace()<<QString(data.student.at(i))<<"\t" ;    //按照要求分别输出一行的学生数据
+    d.noquote().nospace()<<QString(data.student.at(i))<<"\t" ;    //按照要求分别输出每一行的学生数据
     return d;
 }
-
-
 
 class myCmp                                                       //定义比较类
 {
@@ -69,7 +64,6 @@ private:
     int currentColumn;
 };
 
-
 #define rule(q)   (d1.student.at(q)>=d2.student.at(q))?  1:0       //宏定义学生的成绩比较规则
 bool myCmp::operator()(const studData &d1,const  studData &d2)     //比较的规则
 {
@@ -77,7 +71,7 @@ bool myCmp::operator()(const studData &d1,const  studData &d2)     //比较的�
     quint32 sortedColumn = 0x00000001<<currentColumn;
     switch (sortedColumn)
     {
-       case SK::col01:result=rule(1);break;
+       case SK::col01:result=rule(1);break;                        //调用宏定义学生的成绩比较规则
        case SK::col02:result=rule(2);break;
        case SK::col03:result=rule(3);break;
        case SK::col04:result=rule(4);break;
@@ -113,9 +107,6 @@ bool myCmp::operator()(const studData &d1,const  studData &d2)     //比较的�
     }
     return result;
 }
-
-
-
 class ScoreSorter                         //排序执行类
 {
 public:
@@ -128,34 +119,27 @@ private:
     QString route;
     QList<studData > data;
     studData constellation;
-
 };
 
 ScoreSorter::ScoreSorter(QString dataFile)  //进行初始化
 {
     this->route=dataFile;
 }
-
-
-
-void ScoreSorter::read()//读取文件，并将数据整理
+void ScoreSorter::read()               //对文件进行读取，将数据进行整理
 {
     QFile file(this->route);
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         qDebug()<<"Can't open the file!"<<endl;
     }
-
     QString titile(file.readLine());
     this->constellation.student = titile.split(" ", QString::SkipEmptyParts);      //对文件进行读取
     if((this->constellation.student).last() == "\n") this->constellation.student.removeLast();
     studData eachdata;
-
     while(!file.atEnd())
     {
         QByteArray line = file.readLine();
         QString str(line);
-
         eachdata.student = str.split(" ", QString::SkipEmptyParts);
         if((eachdata.student).last() == "\n") eachdata.student.removeLast();
         if(eachdata.student.size()==0) continue;
@@ -163,35 +147,27 @@ void ScoreSorter::read()//读取文件，并将数据整理
     }
     file.close();
 }
-
 void ScoreSorter::sort()//ScoreSorter类中排序函数
 {
     for(int i=1;i<this->constellation.student.size();i++)
     {
-        myCmp stducmp(i-1);    //初始化排序规则对象
-        std::sort(this->data.begin() , this->data.end() , stducmp );  //排序
-
+        myCmp stducmp(i-1);                                                        //对规则对象进行初始化排序
+        std::sort(this->data.begin() , this->data.end() , stducmp );               //进行排序
         qDebug()<<"排序后输出，当前排序第 "<<i+1 <<" 列：";
         qDebug() << '\t'<< (this->constellation);    //qDebug重载输出
-
         for(int i=0;i<this->data.size();i++)  qDebug() << this->data.at(i);
         qDebug()<<"---------------------------------------------------------------\n";
-        this->super(i+1);   //当前排序规则下的data 输出到文件
+        this->super(i+1);                                                          //当前排序规则下的data 输出到文件
     }
 }
-
-
 void ScoreSorter::super(quint8 age)
 {
     QFile file("sorted_"+this->route);
-
     file.open(QIODevice::ReadWrite | QIODevice::Append);
     QTextStream stream(&file);
     stream.setCodec("UTF-8");
     stream<<QString("排序后输出，当前排序第 ")<<age <<QString(" 列：")<<"\r\n";
     stream<<"\t";
-
-
     for(int j=0;j<this->constellation.student.size();j++)
         stream<<this->constellation.student.at(j)<<"\t";
         stream<<"\r\n";
@@ -201,18 +177,13 @@ void ScoreSorter::super(quint8 age)
         stream<<this->data.at(i).student.at(j)<<"\t";
         stream<<"\r\n";
     }
-
-
     stream<<"------------------------------------------------------------------"<<"\r\n\r\n";
     file.close();
 }
-
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     // 自定义qDebug
-
-
-        QFile file("Sorter_data.txt");// 输出信息至文件中
+        QFile file("Sorter_data.txt");               // 输出信息保存至文件Sorter_data.txt中
         file.open(QIODevice::WriteOnly | QIODevice::Append);
         QTextStream stream(&file);
         stream <<msg << endl;
@@ -222,22 +193,18 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
         ts << msg << endl;
         file.flush();
         file.close();
-
 }
-
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
         Q_UNUSED(argc);
         Q_UNUSED(argv);
-
-    qInstallMessageHandler(myMessageOutput);
-
+    qInstallMessageHandler(myMessageOutput);     //调用myMessageOutput函数
     QString datafile = "data.txt";
     QFile f("sorted_"+datafile);
     if (f.exists())  f.remove();
     ScoreSorter s(datafile);
-    s.read();                       //读取data.txt
+    s.read();                       //读取data.txt文件
     s.sort();                       //排序输出
     return 0;
 }
