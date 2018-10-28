@@ -43,6 +43,7 @@ class CenterFrame : public QFrame
      void on_btnTextClicked();
      void on_edtTextEdited(const QString &text);
      void on_btnDiamondClicked();
+     void on_btnDrawpicClicked();
 
  private:
      QVBoxLayout* vLayout;
@@ -56,6 +57,7 @@ class CenterFrame : public QFrame
      QPushButton* btnText;
      QLineEdit* edtText;
      QPushButton* btnDiamond;
+     QPushButton* btnDrawpic;
 
  };
 

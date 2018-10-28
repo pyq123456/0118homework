@@ -9,6 +9,9 @@
  #include <QGridLayout>
  #include <QLineEdit>
  #include <QDebug>
+ #include <QFileDialog>
+ #include <QMessageBox>
+ #include <QVector>
 
  CenterFrame::CenterFrame(QWidget *parent) : QFrame(parent)
  {
@@ -119,6 +122,19 @@
      connect(btnDiamond,&QPushButton::clicked,
      this,&CenterFrame::on_btnDiamondClicked);
 
+     //图片按钮
+     btnDrawpic = new QPushButton(group);
+     btnDrawpic ->setToolTip("绘制图片");
+     btnDrawpic ->setCheckable(true);
+     btnDrawpic ->setIconSize(p.size());
+     p.fill(BACKGROUND_COLOR);
+     QImage image(":/new/prefix1/哈士奇.png");
+     QRect targetRect(0,0,p.size().width(),p.size().height());
+     QRect sourceRect =image.rect();
+     painter.drawImage(targetRect,image,sourceRect);
+     btnDrawpic->setIcon (QIcon(p));
+     connect(btnDrawpic,&QPushButton::clicked,this, &CenterFrame::on_btnDrawpicClicked);
+
 
      // 文本按钮
      btnText = new QPushButton(group);
@@ -145,6 +161,7 @@
      gridLayout->addWidget(btnLine,1,1);
      gridLayout->addWidget(btnText,2,0);
      gridLayout->addWidget(btnDiamond,2,1);
+     gridLayout->addWidget(btnDrawpic,3,0);
      gridLayout->setMargin(3);
      gridLayout->setSpacing(3);
      group->setLayout(gridLayout);
@@ -323,7 +340,7 @@
      drawWidget->setDrawnText(text);
  }
 
- //绘制菱形按键响应槽函数
+ //菱形按键响应槽函数
  void CenterFrame::on_btnDiamondClicked()
  {
      if(btnDiamond->isChecked()){
@@ -334,4 +351,20 @@
          drawWidget->setShapeType(ST::None);
      }
  }
+ //图片按键响应槽函数
+  void CenterFrame::on_btnDrawpicClicked()
+  {
+      if(btnDrawpic->isChecked())
+      {
+          drawWidget->setShapeType(ST::picture);
+          drawWidget->drawpic();
+          updateButtonStatus();
+      }
+      else
+      {
+
+          drawWidget->setShapeType(ST::None);
+      }
+
+  }
 
