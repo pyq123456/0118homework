@@ -33,6 +33,7 @@ class CenterFrame : public QFrame
      void setPenWidth(int width=1);
      void setPenColor(QColor color);
      void clearPaint();
+     void savePicture();
 
 
  protected slots:

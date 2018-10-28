@@ -281,6 +281,12 @@
      drawWidget->clear();
  }
 
+ void CenterFrame::savePicture()
+ {
+     drawWidget->save();
+ }
+
+
 
  void CenterFrame::on_btnRectClicked()
  {

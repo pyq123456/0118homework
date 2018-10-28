@@ -288,3 +288,9 @@ canDraw = true;
    pix = newPix;
    update();
  }
+
+ void DrawWidget::save()
+ {
+     QString filename = QFileDialog::getSaveFileName(this,tr("选择图像"),"",tr("Images (*.png *.bmp *.jpg)"));
+         pix->save(filename);
+ }

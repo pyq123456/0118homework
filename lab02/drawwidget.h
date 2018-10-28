@@ -37,7 +37,7 @@
      void setColor(QColor);
      void clear();
      void drawpic();
-
+     void save();
  private :
      QPixmap *pix;
      QPoint startpos;
